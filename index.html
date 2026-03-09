@@ -6,63 +6,20 @@
 <title>Area Duty Roster</title>
 
 <style>
-* { box-sizing: border-box; }
-body {
-    font-family: Arial, sans-serif;
-    background: #eef2f7;
-    margin: 0;
-    padding: 10px;
-}
-.container {
-    width: 100%;
-    max-width: 500px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-h2 { text-align: center; margin-bottom: 20px; }
-label {
-    font-weight: 600;
-    display: block;
-    margin-top: 15px;
-    font-size: 14px;
-}
-select, input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.whatsapp { background: #25D366; color: white; }
-.email { background: #007bff; color: white; }
-.clear { background: #dc3545; color: white; }
-button:active { opacity: 0.85; }
-#summary {
-    margin-top: 20px;
-    padding: 12px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    font-size: 14px;
-    white-space: pre-line;
-    min-height: 120px;
-}
+*{box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:10px;}
+.container{width:100%;max-width:500px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+h2{text-align:center;margin-bottom:20px;}
+label{font-weight:600;display:block;margin-top:15px;font-size:14px;}
+select,input{width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:16px;}
+button{width:100%;padding:14px;margin-top:15px;border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;}
+.whatsapp{background:#25D366;color:white;}
+.email{background:#007bff;color:white;}
+.clear{background:#dc3545;color:white;}
+#summary{margin-top:20px;padding:12px;background:#f9f9f9;border-radius:8px;font-size:14px;white-space:pre-line;min-height:120px;}
+.hidden{display:none;}
 </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -75,41 +32,53 @@ button:active { opacity: 0.85; }
 <input type="time" id="endTime">
 
 <label>Vehicle 1</label>
-<select class="vehicle" onchange="updateVehicles(); updateSummary();">
-    <option value="">Select Vehicle</option>
-</select>
+<select class="vehicle"></select>
 
 <label>Vehicle 2</label>
-<select class="vehicle" onchange="updateVehicles(); updateSummary();">
-    <option value="">Select Vehicle</option>
-</select>
+<select class="vehicle"></select>
 
 <label>Vehicle 3</label>
-<select class="vehicle" onchange="updateVehicles(); updateSummary();">
-    <option value="">Select Vehicle</option>
-</select>
+<select class="vehicle"></select>
 
 <label>OIC</label>
-<select id="oic" onchange="updateSummary()">
-    <option value="">Select OIC</option>
-    <option>M. Oosthuizen</option>
-    <option>D. Lamb</option>
-    <option>D. Barnes</option>
-    <option>JL. Verster</option>
+<select id="oic" onchange="updateAll()">
+<option value="">Select OIC</option>
+<option>M. Oosthuizen</option>
+<option>D. Lamb</option>
+<option>D. Barnes</option>
+<option>JL. Verster</option>
 </select>
 
+<label>Driver</label>
+<select id="driver1" onchange="updateAll()"></select>
+
+<div id="driver2Block" class="hidden">
+<label>Driver 2</label>
+<select id="driver2" onchange="updateAll()"></select>
+</div>
+
+<div id="driver3Block" class="hidden">
+<label>Driver 3</label>
+<select id="driver3" onchange="updateAll()"></select>
+</div>
+
 <label>Crew Member 1</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
+
 <label>Crew Member 2</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
+
 <label>Crew Member 3</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
+
 <label>Crew Member 4</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
+
 <label>Crew Member 5</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
+
 <label>Crew Member 6</label>
-<select class="crew" onchange="updateSummary()"></select>
+<select class="crew"></select>
 
 <button class="whatsapp" onclick="shareWhatsApp()">Share via WhatsApp</button>
 <button class="email" onclick="shareEmail()">Share via Email</button>
@@ -119,122 +88,148 @@ button:active { opacity: 0.85; }
 </div>
 
 <script>
-const crewNames = [
+const crewNames=[
 "M. Oosthuizen","D. Lamb","J. Anthony","D. Barnes","S. Barnard",
 "M. Bisschoff","S. Borgstrom","G. Daniels","F. Dick",
 "C. Esterhuizen","E. Fellows","M. Fish","C. Flux",
-"O. Jjwa","G. Kritzinger","B. Mariwana",
-"B. Matthews","T. Mc Keith","M. Plaatjies",
+"E. Furney","O. Jjwa","G. Kritzinger","B. Mariwana",
+"B. Matthews","T. Mc keith","M. Plaatjies",
 "J. Steele","C. Stredder","M. Sulter","JL. Verster"
 ];
 
-const oicNumbers = {
-"M. Oosthuizen": "060 764 6540",
-"D. Lamb": "082 891 5500",
-"D. Barnes": "074 638 4266",
-"JL. Verster": "074 919 1082"
-};
+const driverNames=[
+"M. Oosthuizen","D. Lamb","D. Barnes","S. Borgstrom",
+"M. Fish","M. Sulter","J. Steele","JL. Verster"
+];
 
-// Crew dropdowns
-const crewDropdowns = document.querySelectorAll(".crew");
-crewDropdowns.forEach(drop => {
-    drop.innerHTML = "<option value=''>Select Crew</option>";
-    crewNames.forEach(name => {
-        drop.innerHTML += `<option>${name}</option>`;
-    });
+const vehicleList=["DX28","DX107","DX114"];
+const oicNumbers={"M. Oosthuizen":"060 764 6540","D. Lamb":"082 891 5500","D. Barnes":"074 638 4266","JL. Verster":"074 919 1082"};
+
+const crewDropdowns=document.querySelectorAll(".crew");
+const vehicleDropdowns=document.querySelectorAll(".vehicle");
+
+function initVehicles(){
+vehicleDropdowns.forEach(drop=>{
+drop.innerHTML="<option value=''>Select Vehicle</option>";
+vehicleList.forEach(v=>drop.innerHTML+=`<option>${v}</option>`);
 });
-
-// Vehicles list
-const vehicleList = ["DX28","DX107","DX114"];
-const vehicleDropdowns = document.querySelectorAll(".vehicle");
-
-// Initialize vehicle dropdowns
-function initVehicles() {
-    vehicleDropdowns.forEach(drop => {
-        drop.innerHTML = "<option value=''>Select Vehicle</option>";
-        vehicleList.forEach(v => drop.innerHTML += `<option>${v}</option>`);
-    });
 }
 
-// Prevent duplicate vehicles
-function updateVehicles() {
-    const selected = Array.from(vehicleDropdowns).map(d => d.value).filter(v => v !== "");
-    vehicleDropdowns.forEach(drop => {
-        const currentValue = drop.value;
-        drop.innerHTML = "<option value=''>Select Vehicle</option>";
-        vehicleList.forEach(v => {
-            if(!selected.includes(v) || v === currentValue) {
-                drop.innerHTML += `<option value="${v}" ${v===currentValue?'selected':''}>${v}</option>`;
-            }
-        });
-    });
+function getVehicleCount(){
+return [...vehicleDropdowns].filter(v=>v.value).length;
 }
 
-function getSelectedCrew() {
-    let crewList = [];
-    crewDropdowns.forEach(drop => {
-        if(drop.value) crewList.push(drop.value);
-    });
-    return crewList;
+function updateDriverVisibility(){
+const count=getVehicleCount();
+document.getElementById("driver2Block").classList.toggle("hidden",count<2);
+document.getElementById("driver3Block").classList.toggle("hidden",count<3);
 }
 
-function getSelectedVehicles() {
-    return Array.from(vehicleDropdowns).map(d => d.value).filter(v => v !== "").join(" ");
+function populateDrivers(){
+const oic=document.getElementById("oic").value;
+const d1=document.getElementById("driver1").value;
+const d2=document.getElementById("driver2").value;
+const d3=document.getElementById("driver3").value;
+const selected=[d1,d2,d3];
+
+["driver1","driver2","driver3"].forEach((id)=>{
+const drop=document.getElementById(id);
+const current=drop.value;
+drop.innerHTML="<option value=''>Select Driver</option>";
+driverNames.concat(oic? [oic]: []).forEach(name=>{
+if((!selected.includes(name)||name===current)){
+drop.innerHTML+=`<option ${name===current?'selected':''}>${name}</option>`;
+}
+});
+});
 }
 
-function updateSummary() {
-    const start = document.getElementById("startTime").value;
-    const end = document.getElementById("endTime").value;
-    const oic = document.getElementById("oic").value;
-    const crew = getSelectedCrew();
-    const vehicles = getSelectedVehicles();
+function updateCrewDropdowns(){
+const oic=document.getElementById("oic").value;
+const d1=document.getElementById("driver1").value;
+const d2=document.getElementById("driver2").value;
+const d3=document.getElementById("driver3").value;
+const excluded=[oic,d1,d2,d3];
+const selectedCrew=[...crewDropdowns].map(d=>d.value);
+crewDropdowns.forEach(drop=>{
+const current=drop.value;
+drop.innerHTML="<option value=''>Select Crew</option>";
+crewNames.forEach(name=>{
+if(!excluded.includes(name)&&(!selectedCrew.includes(name)||name===current)){
+drop.innerHTML+=`<option ${name===current?'selected':''}>${name}</option>`;
+}
+});
+});
+}
 
-    // Format date DD/MM/YYYY
-    const todayRaw = new Date();
-    const dd = String(todayRaw.getDate()).padStart(2, '0');
-    const mm = String(todayRaw.getMonth() + 1).padStart(2, '0');
-    const yyyy = todayRaw.getFullYear();
-    const today = `${dd}/${mm}/${yyyy}`;
+function getSelectedCrew(){return [...crewDropdowns].map(d=>d.value).filter(v=>v);}
+function getSelectedVehicles(){return [...vehicleDropdowns].map(d=>d.value).filter(v=>v).join(" ");}
 
-    let message = `Duty crew booking on run for Area Duty
+function updateSummary(){
+const start=document.getElementById("startTime").value;
+const end=document.getElementById("endTime").value;
+const oic=document.getElementById("oic").value;
+const d1=document.getElementById("driver1").value;
+const d2=document.getElementById("driver2").value;
+const d3=document.getElementById("driver3").value;
+const drivers=[d1,d2,d3].filter(v=>v);
+const crew=getSelectedCrew();
+const vehicles=getSelectedVehicles();
+const todayRaw=new Date();
+const dd=String(todayRaw.getDate()).padStart(2,'0');
+const mm=String(todayRaw.getMonth()+1).padStart(2,'0');
+const yyyy=todayRaw.getFullYear();
+const today=`${dd}/${mm}/${yyyy}`;
+let message=`Duty crew booking on run for Area Duty
 
 Date: ${today}
 Duration of Shift: ${start} – ${end}
 Vehicles on run: ${vehicles}
 
-• ${oic}
 `;
-
-    crew.forEach(member => { message += `• ${member}\n`; });
-
-    message += `
-Signing out 2 Radios, 2 x O2 Cylinders and Medical Equipment
-
+if(oic){
+if(drivers.includes(oic)){
+message+=`• ${oic} – (OIC/Driver)\n`;
+}else{
+message+=`• ${oic} – (OIC)\n`;
+}
+}
+drivers.forEach(d=>{if(d!==oic) message+=`• ${d} – (Driver)\n`;});
+crew.forEach(c=>{message+=`• ${c}\n`;});
+message+=`\nSigning out 2 Radios, 2 x O2 Cylinders and Medical Equipment
 DOC Informed`;
-
-    document.getElementById("summary").textContent = message;
+document.getElementById("summary").textContent=message;
 }
 
-function shareWhatsApp() {
-    const message = document.getElementById("summary").textContent;
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
+function updateAll(){
+updateDriverVisibility();
+populateDrivers();
+updateCrewDropdowns();
+updateSummary();
 }
 
-function shareEmail() {
-    const start = document.getElementById("startTime").value;
-    const end = document.getElementById("endTime").value;
-    const oic = document.getElementById("oic").value;
-    const crew = getSelectedCrew();
-    const vehicles = getSelectedVehicles();
+function shareWhatsApp(){
+const message=document.getElementById("summary").textContent;
+window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
+}
 
-    // Format date DD/MM/YYYY
-    const todayRaw = new Date();
-    const dd = String(todayRaw.getDate()).padStart(2, '0');
-    const mm = String(todayRaw.getMonth() + 1).padStart(2, '0');
-    const yyyy = todayRaw.getFullYear();
-    const today = `${dd}/${mm}/${yyyy}`;
+function shareEmail(){
+const start=document.getElementById("startTime").value;
+const end=document.getElementById("endTime").value;
+const oic=document.getElementById("oic").value;
+const d1=document.getElementById("driver1").value;
+const d2=document.getElementById("driver2").value;
+const d3=document.getElementById("driver3").value;
+const drivers=[d1,d2,d3].filter(v=>v);
+const crew=getSelectedCrew();
+const vehicles=getSelectedVehicles();
+const todayRaw=new Date();
+const dd=String(todayRaw.getDate()).padStart(2,'0');
+const mm=String(todayRaw.getMonth()+1).padStart(2,'0');
+const yyyy=todayRaw.getFullYear();
+const today=`${dd}/${mm}/${yyyy}`;
 
-    let body = `Hi Control
+let body=`Hi Control
 
 Duty Roster booking on run for area duty is as follows
 
@@ -242,33 +237,38 @@ Date: ${today}
 Duration of Shift: ${start} – ${end}
 Vehicles on run: ${vehicles}
 
-• ${oic} – ${oicNumbers[oic] || ""}
 `;
 
-    crew.forEach(member => { body += `• ${member}\n`; });
+if(oic){
+if(drivers.includes(oic)){
+body+=`• ${oic} – (OIC/Driver) Cell: ${oicNumbers[oic]||""}\n`;
+}else{
+body+=`• ${oic} – (OIC) Cell: ${oicNumbers[oic]||""}\n`;
+}
+}
+drivers.forEach(d=>{if(d!==oic) body+=`• ${d} – (Driver)\n`;});
+crew.forEach(c=>{body+=`• ${c}\n`;});
 
-    body += `
-Signing out 2 Radios, 2 x O2 Cylinders and Medical Equipment`;
+body+=`\nSigning out 2 Radios, 2 x O2 Cylinders and Medical Equipment
 
-    const subject = `Duty Roster Area Duty – Fish Hoek Base - ${today}`;
-    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+Regards;`;
+
+const subject=`Duty Roster Area Duty – Fish Hoek Base - ${today}`;
+window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-function clearForm() {
-    document.querySelectorAll("input, select").forEach(el => el.value = "");
-    initVehicles();
-    updateSummary();
-}
-
-// Initialize
+function clearForm(){
+document.querySelectorAll("input,select").forEach(el=>el.value="");
 initVehicles();
+updateAll();
+}
+
+initVehicles();
+populateDrivers();
+updateCrewDropdowns();
 updateSummary();
 
-// Real-time updates
-document.getElementById("startTime").addEventListener("input", updateSummary);
-document.getElementById("endTime").addEventListener("input", updateSummary);
-document.querySelectorAll(".vehicle").forEach(el => el.addEventListener("change", () => { updateVehicles(); updateSummary(); }));
+document.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",updateAll));
 </script>
-
 </body>
 </html>
