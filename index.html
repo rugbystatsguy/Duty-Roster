@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Area Duty Roster</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 *{box-sizing:border-box;}
 body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:10px;}
@@ -12,12 +14,35 @@ body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:10px;}
 h2{text-align:center;margin-bottom:20px;}
 label{font-weight:600;display:block;margin-top:15px;font-size:14px;}
 select,input{width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:16px;}
-button{width:100%;padding:14px;margin-top:15px;border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;}
-.whatsapp{background:#25D366;color:white;}
-.email{background:#007bff;color:white;}
-.clear{background:#dc3545;color:white;}
 #summary{margin-top:20px;padding:12px;background:#f9f9f9;border-radius:8px;font-size:14px;white-space:pre-line;min-height:120px;}
 .hidden{display:none;}
+
+/* Button row */
+.button-row{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+gap:50px;
+}
+.button-row button{
+flex:1;
+border:none;
+border-radius:50%;
+width:60px;
+height:60px;
+font-size:35px;
+color:white;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
+transition:all 0.2s;
+}
+.button-row button:active{transform:scale(0.95);}
+.whatsapp{background:#25D366;}
+.email{background:#007bff;}
+.clear{background:#dc3545;}
 </style>
 </head>
 <body>
@@ -80,14 +105,23 @@ button{width:100%;padding:14px;margin-top:15px;border:none;border-radius:8px;fon
 <label>Crew Member 6</label>
 <select class="crew"></select>
 
-<button class="whatsapp" onclick="shareWhatsApp()">Share via WhatsApp</button>
-<button class="email" onclick="shareEmail()">Share via Email</button>
-<button class="clear" onclick="clearForm()">Clear Form</button>
+<div class="button-row">
+<button class="whatsapp" onclick="playClick();shareWhatsApp()" title="Share WhatsApp"><i class="fab fa-whatsapp"></i></button>
+<button class="email" onclick="playClick();shareEmail()" title="Share Email"><i class="fas fa-envelope"></i></button>
+<button class="clear" onclick="playClick();clearForm()" title="Clear Form"><i class="fas fa-trash-alt"></i></button>
+</div>
 
 <div id="summary"></div>
 </div>
 
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
 <script>
+function playClick(){
+document.getElementById("clickSound").currentTime=0;
+document.getElementById("clickSound").play();
+}
+
 const crewNames=[
 "M. Oosthuizen","D. Lamb","J. Anthony","D. Barnes","S. Barnard",
 "M. Bisschoff","S. Borgstrom","G. Daniels","F. Dick",
@@ -115,9 +149,7 @@ vehicleList.forEach(v=>drop.innerHTML+=`<option>${v}</option>`);
 });
 }
 
-function getVehicleCount(){
-return [...vehicleDropdowns].filter(v=>v.value).length;
-}
+function getVehicleCount(){return [...vehicleDropdowns].filter(v=>v.value).length;}
 
 function updateDriverVisibility(){
 const count=getVehicleCount();
@@ -197,6 +229,7 @@ message+=`• ${oic} – (OIC)\n`;
 drivers.forEach(d=>{if(d!==oic) message+=`• ${d} – (Driver)\n`;});
 crew.forEach(c=>{message+=`• ${c}\n`;});
 message+=`\nSigning out 2 Radios, 2 x O2 Cylinders and Medical Equipment
+
 DOC Informed`;
 document.getElementById("summary").textContent=message;
 }
