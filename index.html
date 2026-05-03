@@ -5,49 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Area Duty Roster</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
 *{box-sizing:border-box;}
-body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:10px;}
-.container{width:100%;max-width:500px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-h2{text-align:center;margin-bottom:20px;}
-label{font-weight:600;display:block;margin-top:15px;font-size:14px;}
-select,input{width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:16px;}
-#summary{margin-top:20px;padding:12px;background:#f9f9f9;border-radius:8px;font-size:14px;white-space:pre-line;min-height:120px;}
-.hidden{display:none;}
 
-/* Button row */
-.button-row{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-gap:50px;
+body{
+font-family:Arial,sans-serif;
+background:#eef2f7;
+margin:0;
+padding:10px;
 }
-.button-row button{
-flex:1;
+
+.container{
+width:100%;
+max-width:500px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+label{
+font-weight:600;
+display:block;
+margin-top:15px;
+font-size:14px;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin-top:6px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
 border:none;
-border-radius:50%;
-width:60px;
-height:60px;
-font-size:30px;
-color:white;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
 cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 2px 6px rgba(0,0,0,0.2);
-transition:all 0.2s;
 }
-.button-row button:active{transform:scale(0.95);}
-.whatsapp{background:#25D366;}
-.email{background:#007bff;}
-.clear{background:#dc3545;}
+
+.whatsapp{background:#25D366;color:white;}
+.email{background:#007bff;color:white;}
+.clear{background:#dc3545;color:white;}
+
+#summary{
+margin-top:20px;
+padding:12px;
+background:#f9f9f9;
+border-radius:8px;
+font-size:14px;
+white-space:pre-line;
+min-height:120px;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
+
 <h2>Area Duty Roster</h2>
 
 <label>Shift Start Time</label>
@@ -66,7 +95,7 @@ transition:all 0.2s;
 <select class="vehicle"></select>
 
 <label>OIC</label>
-<select id="oic" onchange="updateAll()">
+<select id="oic">
 <option value="">Select OIC</option>
 <option>M. Oosthuizen</option>
 <option>D. Lamb</option>
@@ -75,17 +104,17 @@ transition:all 0.2s;
 </select>
 
 <label>Driver</label>
-<select id="driver1" onchange="updateAll()"></select>
-
-<div id="driver2Block" class="hidden">
-<label>Driver 2</label>
-<select id="driver2" onchange="updateAll()"></select>
-</div>
-
-<div id="driver3Block" class="hidden">
-<label>Driver 3</label>
-<select id="driver3" onchange="updateAll()"></select>
-</div>
+<select id="driver">
+<option value="">Select Driver</option>
+<option>M. Oosthuizen</option>
+<option>D. Lamb</option>
+<option>D. Barnes</option>
+<option>S. Borgstrom</option>
+<option>M. Fish</option>
+<option>M. Sulter</option>
+<option>J. Steele</option>
+<option>JL. Verster</option>
+</select>
 
 <label>Crew Member 1</label>
 <select class="crew"></select>
@@ -105,22 +134,15 @@ transition:all 0.2s;
 <label>Crew Member 6</label>
 <select class="crew"></select>
 
-<div class="button-row">
-<button class="whatsapp" onclick="playClick();shareWhatsApp()" title="Share WhatsApp"><i class="fab fa-whatsapp"></i></button>
-<button class="email" onclick="playClick();shareEmail()" title="Share Email"><i class="fas fa-envelope"></i></button>
-<button class="clear" onclick="playClick();clearForm()" title="Clear Form"><i class="fas fa-trash-alt"></i></button>
-</div>
+<button class="whatsapp" onclick="shareWhatsApp()">Share via WhatsApp</button>
+<button class="email" onclick="shareEmail()">Share via Email</button>
+<button class="clear" onclick="clearForm()">Clear Form</button>
 
 <div id="summary"></div>
+
 </div>
 
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
-
 <script>
-function playClick(){
-document.getElementById("clickSound").currentTime=0;
-document.getElementById("clickSound").play();
-}
 
 const crewNames=[
 "M. Oosthuizen","D. Lamb","J. Anthony","D. Barnes","S. Barnard",
@@ -131,87 +153,131 @@ const crewNames=[
 "J. Steele","C. Stredder","M. Sulter","JL. Verster"
 ];
 
-const driverNames=[
-"M. Oosthuizen","D. Lamb","D. Barnes","S. Borgstrom",
-"M. Fish","M. Sulter","J. Steele","JL. Verster"
-];
-
 const vehicleList=["DX28","DX107","DX114"];
-const oicNumbers={"M. Oosthuizen":"060 764 6540","D. Lamb":"082 891 5500","D. Barnes":"074 638 4266","JL. Verster":"074 919 1082"};
+
+const oicNumbers={
+"M. Oosthuizen":"060 764 6540",
+"D. Lamb":"082 891 5500",
+"D. Barnes":"074 638 4266",
+"JL. Verster":"074 919 1082"
+};
 
 const crewDropdowns=document.querySelectorAll(".crew");
 const vehicleDropdowns=document.querySelectorAll(".vehicle");
 
+/* ---------------- STORAGE ---------------- */
+
+function saveForm(){
+const data={
+start:document.getElementById("startTime").value,
+end:document.getElementById("endTime").value,
+oic:document.getElementById("oic").value,
+driver:document.getElementById("driver").value,
+vehicles:[...vehicleDropdowns].map(d=>d.value),
+crew:[...crewDropdowns].map(d=>d.value)
+};
+localStorage.setItem("dutyRoster",JSON.stringify(data));
+}
+
+function loadForm(){
+const data=JSON.parse(localStorage.getItem("dutyRoster"));
+if(!data) return;
+
+document.getElementById("startTime").value=data.start||"";
+document.getElementById("endTime").value=data.end||"";
+document.getElementById("oic").value=data.oic||"";
+document.getElementById("driver").value=data.driver||"";
+
+vehicleDropdowns.forEach((d,i)=>{
+d.value=data.vehicles?.[i]||"";
+});
+
+crewDropdowns.forEach((d,i)=>{
+d.value=data.crew?.[i]||"";
+});
+
+updateVehicles();
+updateCrewDropdowns();
+updateSummary();
+}
+
+/* ---------------- INIT ---------------- */
+
 function initVehicles(){
 vehicleDropdowns.forEach(drop=>{
 drop.innerHTML="<option value=''>Select Vehicle</option>";
-vehicleList.forEach(v=>drop.innerHTML+=`<option>${v}</option>`);
+vehicleList.forEach(v=>{
+drop.innerHTML+=`<option>${v}</option>`;
+});
 });
 }
 
-function getVehicleCount(){return [...vehicleDropdowns].filter(v=>v.value).length;}
+/* ---------------- VEHICLES ---------------- */
 
-function updateDriverVisibility(){
-const count=getVehicleCount();
-document.getElementById("driver2Block").classList.toggle("hidden",count<2);
-document.getElementById("driver3Block").classList.toggle("hidden",count<3);
-}
+function updateVehicles(){
+const selected=[...vehicleDropdowns].map(d=>d.value).filter(v=>v);
 
-function populateDrivers(){
-const oic=document.getElementById("oic").value;
-const d1=document.getElementById("driver1").value;
-const d2=document.getElementById("driver2").value;
-const d3=document.getElementById("driver3").value;
-const selected=[d1,d2,d3];
-
-["driver1","driver2","driver3"].forEach((id)=>{
-const drop=document.getElementById(id);
+vehicleDropdowns.forEach(drop=>{
 const current=drop.value;
-drop.innerHTML="<option value=''>Select Driver</option>";
-driverNames.concat(oic? [oic]: []).forEach(name=>{
-if((!selected.includes(name)||name===current)){
-drop.innerHTML+=`<option ${name===current?'selected':''}>${name}</option>`;
+drop.innerHTML="<option value=''>Select Vehicle</option>";
+
+vehicleList.forEach(v=>{
+if(!selected.includes(v)||v===current){
+drop.innerHTML+=`<option ${v===current?'selected':''}>${v}</option>`;
 }
 });
 });
 }
+
+/* ---------------- CREW ---------------- */
 
 function updateCrewDropdowns(){
+
 const oic=document.getElementById("oic").value;
-const d1=document.getElementById("driver1").value;
-const d2=document.getElementById("driver2").value;
-const d3=document.getElementById("driver3").value;
-const excluded=[oic,d1,d2,d3];
+const driver=document.getElementById("driver").value;
 const selectedCrew=[...crewDropdowns].map(d=>d.value);
+
 crewDropdowns.forEach(drop=>{
 const current=drop.value;
 drop.innerHTML="<option value=''>Select Crew</option>";
+
 crewNames.forEach(name=>{
-if(!excluded.includes(name)&&(!selectedCrew.includes(name)||name===current)){
+if(
+name!==oic &&
+name!==driver &&
+(!selectedCrew.includes(name)||name===current)
+){
 drop.innerHTML+=`<option ${name===current?'selected':''}>${name}</option>`;
 }
 });
 });
 }
 
-function getSelectedCrew(){return [...crewDropdowns].map(d=>d.value).filter(v=>v);}
-function getSelectedVehicles(){return [...vehicleDropdowns].map(d=>d.value).filter(v=>v).join(" ");}
+/* ---------------- HELPERS ---------------- */
+
+function getSelectedCrew(){
+return [...crewDropdowns].map(d=>d.value).filter(v=>v);
+}
+
+function getSelectedVehicles(){
+return [...vehicleDropdowns].map(d=>d.value).filter(v=>v).join(" ");
+}
+
+/* ---------------- SUMMARY ---------------- */
 
 function updateSummary(){
+
 const start=document.getElementById("startTime").value;
 const end=document.getElementById("endTime").value;
 const oic=document.getElementById("oic").value;
-const d1=document.getElementById("driver1").value;
-const d2=document.getElementById("driver2").value;
-const d3=document.getElementById("driver3").value;
-const drivers=[d1,d2,d3].filter(v=>v);
+const driver=document.getElementById("driver").value;
+
 const crew=getSelectedCrew();
 const vehicles=getSelectedVehicles();
+
 const todayRaw=new Date();
-const dd=String(todayRaw.getDate()).padStart(2,'0');
-const mm=String(todayRaw.getMonth()+1).padStart(2,'0');
-const yyyy=todayRaw.getFullYear();
-const today=`${dd}/${mm}/${yyyy}`;
+const today=`${String(todayRaw.getDate()).padStart(2,'0')}/${String(todayRaw.getMonth()+1).padStart(2,'0')}/${todayRaw.getFullYear()}`;
+
 let message=`Duty crew booking on run for Area Duty
 
 Date: ${today}
@@ -219,27 +285,31 @@ Duration of Shift: ${start} – ${end}
 Vehicles on run: ${vehicles}
 
 `;
+
 if(oic){
-if(drivers.includes(oic)){
+if(driver && driver===oic){
 message+=`• ${oic} – (OIC/Driver)\n`;
 }else{
 message+=`• ${oic} – (OIC)\n`;
+if(driver) message+=`• ${driver} – (Driver)\n`;
 }
 }
-drivers.forEach(d=>{if(d!==oic) message+=`• ${d} – (Driver)\n`;});
-crew.forEach(c=>{message+=`• ${c}\n`;});
-message+=`\nSigning out 2 Radios, 2 x O2 Cylinders and Medical Equipment
 
+crew.forEach(m=>{
+message+=`• ${m}\n`;
+});
+
+message+=`
+
+Signing out 2 Radios, 2 x O2 Cylinders and Medical Equipment
 DOC Informed`;
+
 document.getElementById("summary").textContent=message;
+
+saveForm();
 }
 
-function updateAll(){
-updateDriverVisibility();
-populateDrivers();
-updateCrewDropdowns();
-updateSummary();
-}
+/* ---------------- SHARE ---------------- */
 
 function shareWhatsApp(){
 const message=document.getElementById("summary").textContent;
@@ -247,20 +317,17 @@ window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
 }
 
 function shareEmail(){
+
 const start=document.getElementById("startTime").value;
 const end=document.getElementById("endTime").value;
 const oic=document.getElementById("oic").value;
-const d1=document.getElementById("driver1").value;
-const d2=document.getElementById("driver2").value;
-const d3=document.getElementById("driver3").value;
-const drivers=[d1,d2,d3].filter(v=>v);
+const driver=document.getElementById("driver").value;
+
 const crew=getSelectedCrew();
 const vehicles=getSelectedVehicles();
+
 const todayRaw=new Date();
-const dd=String(todayRaw.getDate()).padStart(2,'0');
-const mm=String(todayRaw.getMonth()+1).padStart(2,'0');
-const yyyy=todayRaw.getFullYear();
-const today=`${dd}/${mm}/${yyyy}`;
+const today=`${String(todayRaw.getDate()).padStart(2,'0')}/${String(todayRaw.getMonth()+1).padStart(2,'0')}/${todayRaw.getFullYear()}`;
 
 let body=`Hi Control
 
@@ -273,35 +340,79 @@ Vehicles on run: ${vehicles}
 `;
 
 if(oic){
-if(drivers.includes(oic)){
+if(driver && driver===oic){
 body+=`• ${oic} – (OIC/Driver) Cell: ${oicNumbers[oic]||""}\n`;
 }else{
 body+=`• ${oic} – (OIC) Cell: ${oicNumbers[oic]||""}\n`;
+if(driver) body+=`• ${driver} – (Driver)\n`;
 }
 }
-drivers.forEach(d=>{if(d!==oic) body+=`• ${d} – (Driver)\n`;});
-crew.forEach(c=>{body+=`• ${c}\n`;});
 
-body+=`\nSigning out 2 Radios, 2 x O2 Cylinders and Medical Equipment
+crew.forEach(m=>{
+body+=`• ${m}\n`;
+});
+
+body+=`
+
+Signing out 2 Radios, 2 x O2 Cylinders and Medical Equipment
 
 Regards;`;
 
 const subject=`Duty Roster Area Duty – Fish Hoek Base - ${today}`;
+
 window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+/* ---------------- CLEAR ---------------- */
+
 function clearForm(){
 document.querySelectorAll("input,select").forEach(el=>el.value="");
+localStorage.removeItem("dutyRoster");
 initVehicles();
-updateAll();
+updateCrewDropdowns();
+updateSummary();
 }
 
+/* ---------------- EVENTS ---------------- */
+
 initVehicles();
-populateDrivers();
+loadForm();
+
 updateCrewDropdowns();
 updateSummary();
 
-document.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",updateAll));
+document.getElementById("startTime").addEventListener("input",updateSummary);
+document.getElementById("endTime").addEventListener("input",updateSummary);
+
+document.getElementById("oic").addEventListener("change",()=>{
+updateCrewDropdowns();
+updateSummary();
+saveForm();
+});
+
+document.getElementById("driver").addEventListener("change",()=>{
+updateCrewDropdowns();
+updateSummary();
+saveForm();
+});
+
+document.querySelectorAll(".vehicle").forEach(el=>{
+el.addEventListener("change",()=>{
+updateVehicles();
+updateSummary();
+saveForm();
+});
+});
+
+crewDropdowns.forEach(el=>{
+el.addEventListener("change",()=>{
+updateCrewDropdowns();
+updateSummary();
+saveForm();
+});
+});
+
 </script>
+
 </body>
 </html>
